@@ -1,7 +1,7 @@
 
 # RSpec: Predicate Matchers & Truthiness (Smart Home Edition)
 
-Welcome to Lesson 13! In this lesson, you'll learn about RSpec's predicate matchers (`be_truthy`, `be_falsey`, `be_nil`, `be_empty`, etc.) and how to use them to write expressive, readable specs. We'll cover what "truthy" and "falsey" mean in Ruby, and show how predicate matchers map to Ruby methods—all using a Smart Home Devices domain (Light, Thermostat, DoorLock) for hands-on practice.
+In this lesson, you'll learn about RSpec's predicate matchers (`be_truthy`, `be_falsey`, `be_nil`, `be_empty`, etc.) and how to use them to write expressive, readable specs. We'll cover what "truthy" and "falsey" mean in Ruby, and show how predicate matchers map to Ruby methods—all using a Smart Home Devices domain (Light, Thermostat, DoorLock) for hands-on practice.
 
 ---
 
