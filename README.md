@@ -1,6 +1,7 @@
-# RSpec: Predicate Matchers & Truthiness
 
-Welcome to Lesson 13! In this lesson, you'll learn about RSpec's predicate matchers (`be_truthy`, `be_falsey`, `be_nil`, `be_empty`, etc.) and how to use them to write expressive, readable specs. We'll cover what "truthy" and "falsey" mean in Ruby, and show how predicate matchers map to Ruby methods.
+# RSpec: Predicate Matchers & Truthiness (Smart Home Edition)
+
+Welcome to Lesson 13! In this lesson, you'll learn about RSpec's predicate matchers (`be_truthy`, `be_falsey`, `be_nil`, `be_empty`, etc.) and how to use them to write expressive, readable specs. We'll cover what "truthy" and "falsey" mean in Ruby, and show how predicate matchers map to Ruby methods—all using a Smart Home Devices domain (Light, Thermostat, DoorLock) for hands-on practice.
 
 ---
 
@@ -9,24 +10,19 @@ Welcome to Lesson 13! In this lesson, you'll learn about RSpec's predicate match
 Predicate matchers let you test for common Ruby predicates (methods ending in `?`). RSpec automatically provides matchers like `be_empty`, `be_nil`, `be_truthy`, and `be_falsey`.
 
 ```ruby
-# /spec/predicate_matchers_spec.rb
-RSpec.describe "Predicate Matchers" do
+# /spec/light_spec.rb
+RSpec.describe Light do
+  let(:light) { Light.new }
 
-  it "checks for truthiness (including 0 and empty string)" do
-    expect(1).to be_truthy
-    expect(0).to be_truthy # 0 is truthy in Ruby!
-    expect("").to be_truthy # empty string is also truthy!
-    expect(nil).to be_falsey
-    expect(false).to be_falsey
+  it "is off by default" do
+    expect(light.on?).to be_falsey
+    expect(light).not_to be_on
   end
 
-  it "checks for nil" do
-    expect(nil).to be_nil
-  end
-
-  it "checks for empty" do
-    expect([]).to be_empty
-    expect({}).to be_empty
+  it "can be turned on" do
+    light.turn_on
+    expect(light.on?).to be_truthy
+    expect(light).to be_on
   end
 end
 ```
@@ -47,19 +43,22 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 
 ## More Predicate Matcher Examples
 
-### Checking for even/odd numbers with custom predicate matchers
+### Checking for custom predicate matchers on your own classes
 
 ```ruby
-# /spec/custom_predicate_matchers_spec.rb
-RSpec.describe "Custom Predicate Matchers" do
-  it "checks for even numbers" do
-    expect(4).to be_even
-    expect(5).not_to be_even
+# /spec/door_lock_spec.rb
+RSpec.describe DoorLock do
+  let(:lock) { DoorLock.new }
+
+  it "is locked by default" do
+    expect(lock.locked?).to be_truthy
+    expect(lock).to be_locked
   end
 
-  it "checks for odd numbers" do
-    expect(5).to be_odd
-    expect(4).not_to be_odd
+  it "can be unlocked" do
+    lock.unlock
+    expect(lock.locked?).to be_falsey
+    expect(lock).not_to be_locked
   end
 end
 ```
@@ -77,23 +76,16 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 
 ---
 
-### Checking for empty strings and arrays (and what doesn't work)
+### Checking for empty arrays (e.g., no devices on)
 
 ```ruby
-# /spec/empty_strings_arrays_spec.rb
-RSpec.describe "Empty Strings and Arrays" do
-  it "checks for empty string" do
-    expect("").to be_empty
-    expect("hello").not_to be_empty
-  end
-
-  it "checks for empty array" do
-    expect([]).to be_empty
-    expect([1,2,3]).not_to be_empty
-  end
-
-  it "does not work for numbers" do
-    expect { expect(0).to be_empty }.to raise_error(NoMethodError)
+# /spec/smart_home_integration_spec.rb
+RSpec.describe "Smart Home Integration" do
+  it "checks for empty array of active devices" do
+    active_devices = []
+    expect(active_devices).to be_empty
+    active_devices << Light.new
+    expect(active_devices).not_to be_empty
   end
 end
 ```
@@ -111,15 +103,16 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 
 ---
 
-### Checking for falsey values
+### Checking for falsey values in device states
 
 ```ruby
-# /spec/falsey_values_spec.rb
-RSpec.describe "Falsey Values" do
-  it "checks for false and nil" do
-    expect(false).to be_falsey
-    expect(nil).to be_falsey
-    expect(0).not_to be_falsey
+# /spec/thermostat_spec.rb
+RSpec.describe Thermostat do
+  let(:thermostat) { Thermostat.new }
+
+  it "is not heating by default" do
+    expect(thermostat.heating?).to be_falsey
+    expect(thermostat).not_to be_heating
   end
 end
 ```
@@ -145,13 +138,6 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 
 `be_something` maps to Ruby’s `something?` method. For example, `be_even` calls `even?`, `be_empty` calls `empty?`, and so on. You can use this with any object that defines a predicate method.
 
-## Practice Prompts
-
-1. Write specs using `be_truthy`, `be_falsey`, and `be_nil` for different values (including 0 and "").
-2. Write specs using `be_empty` for arrays, hashes, and strings. What happens if you try it on a number?
-3. Try using a custom predicate matcher (e.g., `be_even` for numbers).
-4. (Challenge) Write a custom class with a predicate method (e.g., `def ready?`) and use `be_ready` in your spec. What happens if you misspell the method?
-
 ---
 
 ## Predicate Matcher Cheat Sheet
@@ -174,6 +160,39 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 
 - `be_nil` only passes for `nil`.
 - `be_falsey` passes for both `nil` and `false`.
+
+---
+
+## Getting Hands-On
+
+Ready to practice? Here’s how to get started:
+
+1. **Fork and clone this repo to your own GitHub account.**
+2. **Install dependencies:**
+
+    ```zsh
+    bundle install
+    ```
+
+3. **Run the specs:**
+
+    ```zsh
+    bin/rspec
+    ```
+
+4. **Explore the code:**
+
+   - All lesson code uses the Smart Home Devices domain (see `lib/` and `spec/`).
+   - Review the examples for predicate matchers and truthiness.
+
+5. **Implement the pending specs:**
+
+   - Open `spec/smart_home_integration_spec.rb` and look for specs marked as `pending`.
+   - Implement the real methods in the device classes (`lib/light.rb`, `lib/thermostat.rb`, etc.) as needed so the pending specs pass.
+
+6. **Re-run the specs** to verify your changes!
+
+**Challenge:** Try writing your own spec for a new predicate method on a smart home device (e.g., `dimmed?` for Light, `cooling?` for Thermostat) and use the corresponding matcher in your spec.
 
 ---
 
