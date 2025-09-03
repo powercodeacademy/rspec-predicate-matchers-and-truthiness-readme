@@ -7,7 +7,19 @@ In this lesson, you'll learn about RSpec's predicate matchers (`be_truthy`, `be_
 
 ## What Are Predicate Matchers?
 
-Predicate matchers let you test for common Ruby predicates (methods ending in `?`). RSpec automatically provides matchers like `be_empty`, `be_nil`, `be_truthy`, and `be_falsey`.
+Predicate matchers are a powerful feature in RSpec that let you write expressive, natural-language tests for Ruby methods that end in a question mark (`?`). These methods, called predicate methods, return a boolean value (`true` or `false`) and are commonly used in Ruby to check the state or property of an object. For example, `empty?`, `nil?`, `even?`, and custom methods like `on?` or `locked?`.
+
+RSpec automatically creates special matchers for any predicate method, allowing you to write expectations like `expect(array).to be_empty` instead of `expect(array.empty?).to be true`. This makes your specs more readable and closely aligned with how you would describe the behavior in plain English.
+
+Some of the most common built-in predicate matchers include `be_empty`, `be_nil`, `be_truthy`, and `be_falsey`. You can also use predicate matchers with your own custom classes, as long as they define methods ending in `?`.
+
+Predicate matchers are useful because they:
+
+- Make your tests more readable and intention-revealing.
+- Reduce the need to call predicate methods directly in your specs.
+- Work seamlessly with both built-in Ruby predicates and your own custom predicates.
+
+Here's an example using the `Light` class:
 
 ```ruby
 # /spec/light_spec.rb
@@ -39,11 +51,13 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 3 examples, 0 failures
 ```
 
----
-
-## More Predicate Matcher Examples
-
 ### Checking for custom predicate matchers on your own classes
+
+One of the most powerful features of RSpec's predicate matchers is that they work not only with Ruby's built-in predicate methods, but also with any custom predicate methods you define in your own classes. As long as your method ends with a question mark (e.g., `locked?`), RSpec will automatically create a corresponding matcher (e.g., `be_locked`).
+
+This means you don't have to write any extra code or configuration to get this behavior—RSpec will look for a method named `locked?` on your object when you use `be_locked` in your spec. This makes your tests more expressive and closely matches how you would describe the behavior in plain English.
+
+In the example below, the `DoorLock` class defines a `locked?` method. RSpec lets you write both `expect(lock.locked?).to be_truthy` (which checks the return value directly) and the more natural `expect(lock).to be_locked` (which calls `locked?` for you under the hood):
 
 ```ruby
 # /spec/door_lock_spec.rb
@@ -154,7 +168,7 @@ Finished in 0.01 seconds (files took 0.1 seconds to load)
 | `be_positive`   | `positive?`          | Positive numbers (Ruby 2.3+) | `expect(1).to be_positive`    |
 | `be_negative`   | `negative?`          | Negative numbers (Ruby 2.3+)| `expect(-1).to be_negative`   |
 
-**Note:** `be_something` maps to Ruby’s `something?` method. You can use this with any object that defines a predicate method—including your own custom classes!
+**Note:** `be_something` automatically maps to Ruby’s `something?` method. You can use this with any object that defines a predicate method—including your own custom classes!
 
 **be_nil vs be_falsey:**
 
